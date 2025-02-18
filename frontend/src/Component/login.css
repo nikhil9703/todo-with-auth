@@ -1,0 +1,9 @@
+.login_title{
+    padding-top: 40px;
+    font-family: fantasy;
+    text-align: center;
+}
+
+form{
+    border-radius: 10px;
+}

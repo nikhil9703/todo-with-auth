@@ -1,0 +1,39 @@
+body{
+    background-color: white;
+}
+.register_title{
+    text-align: center;
+    font-family: fantasy;
+    font-size: 40px;
+    padding-top: 50px;
+}
+
+form{
+    box-shadow: 10px 10px 10px hsl(0,0%,0%,0.1);
+    background-color: rgb(188, 184, 184);
+    padding-top: 50px;
+    text-align: center;
+    margin: 100px;
+    padding-bottom: 50px;
+}
+
+.text{
+    font-family: fantasy;
+    padding: 5px;
+}
+
+input{
+    padding-inline: 20px;
+    border-radius: 3px;
+    font-family: sans-serif;
+    font-size: 20px;
+}
+
+button{
+    font-family: fantasy;
+    padding: 15px 50px;
+    margin-top: 20px;
+    border-radius: 6px;
+    background-color: rgb(96, 95, 98);
+    cursor: pointer;
+}
