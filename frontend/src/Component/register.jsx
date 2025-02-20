@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./register.css";
+import axios from "axios";  // Fixed the import statement
 
 const Register = () => {
     const navigate = useNavigate();
@@ -24,31 +25,27 @@ const Register = () => {
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/register/", {
-                method: "POST",
+            await axios.post("http://127.0.0.1:8000/register/", {
+                username: formData.username,
+                email: formData.email,
+                password: formData.password,
+            }, {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    username: formData.username,
-                    email: formData.email,
-                    password: formData.password,
-                }),
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert("Error: " + (errorData.error || "Something went wrong"));
-                return;
-            }
 
             alert("User registered successfully!");
             navigate("/login");
             setFormData({ username: "", email: "", password: "", confirmPassword: "" }); // Reset form
 
         } catch (error) {
-            console.error("Fetch error:", error);
-            alert("Failed to connect to the server. Please try again.");
+            console.error("Axios error:", error);
+            if (error.response) {
+                alert("Error: " + (error.response.data.error || "Something went wrong"));
+            } else {
+                alert("Failed to connect to the server. Please try again.");
+            }
         }
     };
 
