@@ -18,12 +18,16 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const passwordvalidate = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (formData.password !== formData.confirmPassword) {
             alert("Passwords do not match");
             return;
         }
-
+        if (!passwordvalidate.test(formData.password)) {
+            alert("Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+            return;
+        }
         try {
             await axios.post("http://127.0.0.1:8000/register/", {
                 username: formData.username,
