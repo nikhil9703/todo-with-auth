@@ -1,5 +1,5 @@
 body{
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(209, 141, 214);
 }
 .register_title{
     text-align: center;
@@ -10,11 +10,12 @@ body{
 
 form{
     box-shadow: 10px 10px 10px hsl(0,0%,0%,0.1);
-    background-color: rgb(188, 184, 184);
+    background-color: rgb(64, 33, 56);
     padding-top: 50px;
     text-align: center;
     margin: 100px;
     padding-bottom: 50px;
+    color: white;
 }
 
 .text{
@@ -23,10 +24,13 @@ form{
 }
 
 input{
+    box-sizing: content-box;
+    color: black;
     padding-inline: 20px;
     border-radius: 3px;
     font-family: sans-serif;
     font-size: 20px;
+    background-color: rgb(254, 204, 242);
 }
 
 button{
@@ -34,6 +38,6 @@ button{
     padding: 15px 50px;
     margin-top: 20px;
     border-radius: 6px;
-    background-color: rgb(96, 95, 98);
+    background-color: hsl(286, 33%, 51%);
     cursor: pointer;
 }

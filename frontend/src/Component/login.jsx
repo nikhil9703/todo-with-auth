@@ -30,7 +30,7 @@ function Login() {
             localStorage.setItem("access", response.data.access);
             localStorage.setItem("refresh", response.data.refresh);
 
-            navigate("/dashboard"); 
+            navigate("/todolist"); 
         } catch (error) {
             console.error("Login error:", error.response?.data || error.message);
             setError(error.response?.data?.error || "Invalid Credentials");
@@ -59,9 +59,10 @@ function Login() {
                     required
                 />
                 <br /><br />
-                <button type="submit">Login</button>
-            </form>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+                <button type="submit">Login</button><br />
+            </form >
+            <button type="forget"  onClick={()=>navigate("/forget-password")}>reset_password</button>
+            {error && <p className="error_msg">{error}</p>}
         </div>
     );
 }
