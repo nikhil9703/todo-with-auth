@@ -30,7 +30,7 @@ function Login() {
             localStorage.setItem("access", response.data.access);
             localStorage.setItem("refresh", response.data.refresh);
 
-            navigate("/todolist"); 
+            navigate("/todoapp"); 
         } catch (error) {
             console.error("Login error:", error.response?.data || error.message);
             setError(error.response?.data?.error || "Invalid Credentials");

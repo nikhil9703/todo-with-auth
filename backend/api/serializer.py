@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from .models import Register
-from .models import TodoItem
+from .models import Todo
 from django.contrib.auth.models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -20,8 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email']  # You can add more fields here if needed
 
-
-class TodoItemSerializer(serializers.ModelSerializer):
+class TodoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TodoItem
+        model = Todo
         fields = ['id', 'title', 'completed', 'created_at']

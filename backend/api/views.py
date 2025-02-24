@@ -1,8 +1,13 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Register, TodoItem
-from .serializer import RegisterSerializer, TodoItemSerializer
+from django.views.decorators.csrf import csrf_exempt
+
+
+from rest_framework import generics, permissions
+from .models import Register, Todo
+from .serializer import RegisterSerializer, TodoSerializer
+
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import check_password
 from rest_framework import viewsets
@@ -12,6 +17,12 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
+
 
 @api_view(['GET', 'POST'])
 def register_list_create(request):
@@ -26,6 +37,7 @@ def register_list_create(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['POST'])
 def login_view(request):
@@ -48,13 +60,6 @@ def login_view(request):
 
     return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-class TodoItemViewSet(viewsets.ModelViewSet):
-    queryset = TodoItem.objects.all()
-    serializer_class = TodoItemSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return TodoItem.objects.filter(user=self.request.user)
 @api_view(["POST"])
 def sent_reset_email(request):
     email = request.data.get("email")
@@ -108,3 +113,35 @@ def reset_password(request, uidb64, token):
         return Response({"error": "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class TodoListView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Log the request and user
+        print(f"Request user: {request.user}")
+        
+        # Fetch all todos for the authenticated user
+        todos = Todo.objects.filter(user=request.user)  # Assuming 'user' field in your Todo model
+        serializer = TodoSerializer(todos, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        # Handle creating a new todo
+        serializer = TodoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)  # Save with the authenticated user
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+class TodoDetailView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        try:
+            todo = Todo.objects.get(pk=pk, user=request.user)
+            todo.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Todo.DoesNotExist:
+            return Response({"error": "Todo not found"}, status=status.HTTP_404_NOT_FOUND)
