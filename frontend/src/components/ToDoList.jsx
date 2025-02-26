@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 import { fetchTasks, createTask, updateTask, deleteTask } from "../api";
 import './ToDoList.css';
 
@@ -12,15 +12,22 @@ const ToDoList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [nextPage, setNextPage] = useState(null);
     const [prevPage, setPrevPage] = useState(null);
+    const [notification, setNotification] = useState(null); // Success message
 
-    const navigate = useNavigate(); // Add this for unauthorized handling
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadTasks();
     }, []);
 
+    // Show notification and clear it after 2 seconds
+    const showNotification = (message) => {
+        setNotification(message);
+        setTimeout(() => setNotification(null), 5000);
+    };
+
     const handleUnauthorized = () => {
-        localStorage.removeItem('token'); // Adjust 'token' to match your key
+        localStorage.removeItem('token');
         navigate('/login');
     };
 
@@ -52,7 +59,8 @@ const ToDoList = () => {
         try {
             await createTask(newTask);
             setNewTask({ title: "", description: "", status: "Pending" });
-            loadTasks(currentPage); // Reload current page
+            showNotification("Task added successfully!");
+            loadTasks(currentPage);
         } catch (error) {
             console.error("Error creating task:", error);
             if (error.response && error.response.status === 401) {
@@ -69,7 +77,8 @@ const ToDoList = () => {
         try {
             await updateTask(editingTask.id, editingTask);
             setEditingTask(null);
-            loadTasks(currentPage); // Reload current page
+            showNotification("Task updated successfully!");
+            loadTasks(currentPage);
         } catch (error) {
             console.error("Error updating task:", error);
             if (error.response && error.response.status === 401) {
@@ -82,7 +91,8 @@ const ToDoList = () => {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
         try {
             await deleteTask(id);
-            loadTasks(currentPage); // Reload current page
+            showNotification("Task deleted successfully!");
+            loadTasks(currentPage);
         } catch (error) {
             console.error("Error deleting task:", error);
             if (error.response && error.response.status === 401) {
@@ -107,6 +117,45 @@ const ToDoList = () => {
         <div className="todo-container">
             <h2>To-Do List</h2>
             {error && <p className="error-message">{error}</p>}
+            {notification && <div className="notification">{notification}</div>}
+
+            {/* Task Form (Above the List) */}
+            <div className="task-form">
+                <h3>{editingTask ? "Edit Task" : "Add Task"}</h3>
+                <input
+                    type="text"
+                    placeholder="Title"
+                    value={editingTask ? editingTask.title : newTask.title}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        editingTask ? setEditingTask({ ...editingTask, title: value }) : setNewTask({ ...newTask, title: value });
+                    }}
+                />
+                <input
+                    type="text"
+                    placeholder="Description"
+                    value={editingTask ? editingTask.description : newTask.description}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        editingTask ? setEditingTask({ ...editingTask, description: value }) : setNewTask({ ...newTask, description: value });
+                    }}
+                />
+                <select
+                    value={editingTask ? editingTask.status : newTask.status}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        editingTask ? setEditingTask({ ...editingTask, status: value }) : setNewTask({ ...newTask, status: value });
+                    }}
+                >
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <button onClick={editingTask ? handleUpdateTask : handleCreateTask}>
+                    {editingTask ? "Update Task" : "Add Task"}
+                </button>
+            </div>
+
+            {/* Task List (Below the Form) */}
             {loading ? (
                 <p>Loading tasks...</p>
             ) : (
@@ -144,40 +193,6 @@ const ToDoList = () => {
                 <button onClick={goToPrevPage} disabled={!prevPage}>Previous</button>
                 <span>Page {currentPage}</span>
                 <button onClick={goToNextPage} disabled={!nextPage}>Next</button>
-            </div>
-            <div className="task-form">
-                <h3>{editingTask ? "Edit Task" : "Add Task"}</h3>
-                <input 
-                    type="text" 
-                    placeholder="Title" 
-                    value={editingTask ? editingTask.title : newTask.title} 
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        editingTask ? setEditingTask({ ...editingTask, title: value }) : setNewTask({ ...newTask, title: value });
-                    }} 
-                />
-                <input 
-                    type="text" 
-                    placeholder="Description" 
-                    value={editingTask ? editingTask.description : newTask.description} 
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        editingTask ? setEditingTask({ ...editingTask, description: value }) : setNewTask({ ...newTask, description: value });
-                    }} 
-                />
-                <select 
-                    value={editingTask ? editingTask.status : newTask.status} 
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        editingTask ? setEditingTask({ ...editingTask, status: value }) : setNewTask({ ...newTask, status: value });
-                    }}
-                >
-                    <option value="Pending">Pending</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <button onClick={editingTask ? handleUpdateTask : handleCreateTask}>
-                    {editingTask ? "Update Task" : "Add Task"}
-                </button>
             </div>
         </div>
     );
