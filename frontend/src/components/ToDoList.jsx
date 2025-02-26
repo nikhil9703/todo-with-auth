@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom"; 
 import { fetchTasks, createTask, updateTask, deleteTask } from "../api";
 import './ToDoList.css';
 
@@ -13,14 +13,14 @@ const ToDoList = () => {
     const [nextPage, setNextPage] = useState(null);
     const [prevPage, setPrevPage] = useState(null);
 
-    const navigate = useNavigate(); // Add this for unauthorized handling
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         loadTasks();
     }, []);
 
     const handleUnauthorized = () => {
-        localStorage.removeItem('token'); // Adjust 'token' to match your key
+        localStorage.removeItem('token'); 
         navigate('/login');
     };
 
@@ -52,7 +52,7 @@ const ToDoList = () => {
         try {
             await createTask(newTask);
             setNewTask({ title: "", description: "", status: "Pending" });
-            loadTasks(currentPage); // Reload current page
+            loadTasks(currentPage); 
         } catch (error) {
             console.error("Error creating task:", error);
             if (error.response && error.response.status === 401) {
@@ -69,7 +69,7 @@ const ToDoList = () => {
         try {
             await updateTask(editingTask.id, editingTask);
             setEditingTask(null);
-            loadTasks(currentPage); // Reload current page
+            loadTasks(currentPage); 
         } catch (error) {
             console.error("Error updating task:", error);
             if (error.response && error.response.status === 401) {
@@ -82,7 +82,7 @@ const ToDoList = () => {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
         try {
             await deleteTask(id);
-            loadTasks(currentPage); // Reload current page
+            loadTasks(currentPage); 
         } catch (error) {
             console.error("Error deleting task:", error);
             if (error.response && error.response.status === 401) {
