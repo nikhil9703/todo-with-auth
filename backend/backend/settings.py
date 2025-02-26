@@ -62,7 +62,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     '*',
 # ]
 
-AUTH_USER_MODEL = 'api.CustomUser'
+
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -144,12 +144,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Adjust as needed
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),      # Adjust as needed
-    'ROTATE_REFRESH_TOKENS': False,  # You can set this to True if needed
-    'BLACKLIST_AFTER_ROTATION': False,
-}
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

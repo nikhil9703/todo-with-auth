@@ -1,27 +1,31 @@
-import TodoApp from "./Component/Todoapp";
-import Front from "./Component/front";
-import Login from "./Component/login";
-import Register from "./Component/register";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import Home from "./components/Home";
+import Navbar from "./components/Navbar";
+import ResetPassword from "./components/ResetPassword";
+import ForgotPassword from "./components/ForgotPassword";
+import ToDoList from "./components/ToDoList";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ForgotPassword from "./Component/ForgetPassword";
-import ResetPassword from "./Component/ResetPassword";
+
 function App() {
-  return (
-    <>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Front />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/todoapp" element={<TodoApp/>} />
-        <Route path="/forget-password" element={<ForgotPassword/>} />
-        <Route path="/reset-password/:uid/:token" element={<ResetPassword/>}/>
-        
-      </Routes>
-    </BrowserRouter>
-    </>
-  );
+    return (
+        <AuthProvider>
+            <Router>
+                <Navbar /> 
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/todo" element={<ToDoList />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
+                </Routes>
+            </Router>
+        </AuthProvider>
+    );
 }
 
 export default App;

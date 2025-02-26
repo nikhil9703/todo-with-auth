@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import axios from "axios";
+import {requestPasswordReset} from '../api'
 
 const ForgotPassword = () =>{
     const[email,setEmail]=useState("");
@@ -8,7 +8,7 @@ const ForgotPassword = () =>{
         e.preventDefault();
         setmessage("");
         try{
-            await axios.post("http://127.0.0.1:8000/password-reset/",{email});
+            await requestPasswordReset(email)
             setmessage("Password reset link sent");
         }catch (error){
             setmessage("Error sending mail.try again");

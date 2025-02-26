@@ -1,6 +1,7 @@
 import React,{useState} from "react";
 import { useParams,useNavigate } from "react-router-dom";
-import axios from "axios";
+import {resetPassword} from "../api"
+import "./ResetPassword.css";
 
 const ResetPassword=()=>{
     const{uid,token}=useParams();
@@ -15,11 +16,7 @@ const ResetPassword=()=>{
         try {
             console.log("Sending request to:", `http://127.0.0.1:8000/password-reset-confirm/${uid}/${token}/`);
     
-            const response = await axios.post(
-                `http://127.0.0.1:8000/password-reset-confirm/${uid}/${token}/`,
-                { password },
-                { headers: { "Content-Type": "application/json" } }
-            );
+            const response = await resetPassword(uid, token, password)
     
             if (response.data.error) {
                 setMessage(response.data.error);

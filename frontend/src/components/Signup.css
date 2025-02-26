@@ -1,0 +1,56 @@
+
+.formcont {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+
+.form-title {
+    font-size: 2em;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+
+.formcont input[type="text"],
+.formcont input[type="email"],
+.formcont input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+
+.formcont input[type="text"]:focus,
+.formcont input[type="email"]:focus,
+.formcont input[type="password"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+
+.formcont button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+/* Button Hover Effect */
+.formcont button[type="submit"]:hover {
+    background-color: #45a049;
+}
