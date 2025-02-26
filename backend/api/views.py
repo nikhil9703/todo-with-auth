@@ -1,3 +1,4 @@
+# api/views.py
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
@@ -115,8 +116,8 @@ def reset_password(request, uidb64, token):
 @permission_classes([IsAuthenticated])
 def task_list_create(request):
     if request.method == "GET":
-        
-        tasks = Task.objects.all().order_by('id') 
+        # Filter tasks by the authenticated user
+        tasks = Task.objects.filter(user=request.user).order_by('id')
         paginator = TaskPagination()
         paginated_tasks = paginator.paginate_queryset(tasks, request)
         serializer = TaskSerializer(paginated_tasks, many=True)
@@ -125,7 +126,8 @@ def task_list_create(request):
     elif request.method == "POST":
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            # Associate the task with the authenticated user
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -133,9 +135,10 @@ def task_list_create(request):
 @permission_classes([IsAuthenticated])
 def task_detail(request, pk):
     try:
-        task = Task.objects.get(pk=pk)
+        # Filter tasks by the authenticated user
+        task = Task.objects.get(pk=pk, user=request.user)
     except Task.DoesNotExist:
-        return Response({"error": "Task not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Task not found or not yours"}, status=status.HTTP_404_NOT_FOUND)
     if request.method == "GET":
         serializer = TaskSerializer(task)
         return Response(serializer.data)
@@ -148,3 +151,4 @@ def task_detail(request, pk):
     elif request.method == "DELETE":
         task.delete()
         return Response({"message": "Task deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    

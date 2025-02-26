@@ -1,9 +1,9 @@
+// src/components/Login.js
 import React, { useState, useContext } from "react";
 import { login } from "../api";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import "./Login.css";
-
 
 const Login = () => {
     const [formData, setFormData] = useState({ username: "", password: "" });
@@ -12,20 +12,23 @@ const Login = () => {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await login(formData);
-            const newaccess = response.data.access;
+            console.log("Login response:", response.data); // Debug
+            const accessToken = response.data.access;
             const username = formData.username;
 
-            loginUser(newaccess,username);
-            navigate("/todo");
+            // Store in localStorage for api.js to use
+            localStorage.setItem("access", accessToken);
+            // Update AuthContext
+            loginUser(accessToken, username);
+            navigate("/todo"); // Should move to ToDoList
         } catch (error) {
-            console.error("Login Error", error.response? error.response.data:error);
+            console.error("Login Error:", error.response ? error.response.data : error);
             alert("Invalid credentials");
         }
     };
@@ -33,8 +36,20 @@ const Login = () => {
     return (
         <form className="formcont" onSubmit={handleSubmit}>
             <h3 className="form-title">Login</h3>
-            <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                onChange={handleChange}
+                required
+            />
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                required
+            />
             <button type="submit">Login</button>
             <p><a href="/forgot-password">Forgot Password?</a></p>
         </form>

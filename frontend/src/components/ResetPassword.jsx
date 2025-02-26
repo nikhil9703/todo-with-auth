@@ -1,43 +1,43 @@
-import React,{useState} from "react";
-import { useParams,useNavigate } from "react-router-dom";
-import {resetPassword} from "../api"
-import "./ResetPassword.css";
+// src/components/ResetPassword.jsx
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { resetPassword } from "../api";
+import "./ResetPassword.css"; // Assuming you have this
 
-const ResetPassword=()=>{
-    const{uid,token}=useParams();
-    const[password,setPassword]=useState("");
-    const[message,setMessage]=useState("");
-    const navigate =useNavigate();
+const ResetPassword = () => {
+    const [password, setPassword] = useState("");
+    const [message, setMessage] = useState(null);
+    const [error, setError] = useState(null);
+    const { uid, token } = useParams(); // Get uid and token from URL
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage("");
-    
         try {
-            console.log("Sending request to:", `http://127.0.0.1:8000/password-reset-confirm/${uid}/${token}/`);
-    
-            const response = await resetPassword(uid, token, password)
-    
-            if (response.data.error) {
-                setMessage(response.data.error);
-            } else {
-                setMessage(response.data.message || "Password reset successful! Redirecting to login...");
-                setTimeout(() => navigate("/login"), 3000);
-            }
-        } catch (error) {
-            console.error("Error resetting password:", error.response ? error.response.data : error.message);
-            setMessage(error.response?.data?.error || "Error resetting password. Please try again.");
+            const response = await resetPassword(uid, token, password);
+            setMessage(response.data.message); // "Password reset success!"
+            setTimeout(() => navigate("/login"), 2000); // Redirect after 2s
+        } catch (err) {
+            setError(err.response?.data?.error || "Failed to reset password");
         }
     };
-    
-    return(
-        <div className="form-container">
-            <h2>Reset Password</h2>
+
+    return (
+        <div className="reset-password-container">
+            <h3>Reset Password</h3>
+            {message && <p className="success-message">{message}</p>}
+            {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
-                <input type="password" placeholder="Enter new password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
+                <input
+                    type="password"
+                    placeholder="Enter new password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
                 <button type="submit">Reset Password</button>
             </form>
-            <p>{message}</p>
+            <p><a href="/login">Back to Login</a></p>
         </div>
     );
 };

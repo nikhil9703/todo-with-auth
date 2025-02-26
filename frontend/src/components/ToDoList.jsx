@@ -1,3 +1,4 @@
+// src/components/ToDoList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchTasks, createTask, updateTask, deleteTask } from "../api";
@@ -12,23 +13,27 @@ const ToDoList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [nextPage, setNextPage] = useState(null);
     const [prevPage, setPrevPage] = useState(null);
-    const [notification, setNotification] = useState(null); // Success message
+    const [notification, setNotification] = useState(null);
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        const token = localStorage.getItem("access");
+        if (!token) {
+            navigate("/login"); // Redirect if no token
+            return;
+        }
         loadTasks();
-    }, []);
+    }, [navigate]);
 
-    // Show notification and clear it after 2 seconds
     const showNotification = (message) => {
         setNotification(message);
         setTimeout(() => setNotification(null), 5000);
     };
 
     const handleUnauthorized = () => {
-        localStorage.removeItem('token');
-        navigate('/login');
+        localStorage.removeItem("access");
+        navigate("/login"); // Navigation handled here
     };
 
     const loadTasks = async (page = 1) => {
@@ -36,6 +41,7 @@ const ToDoList = () => {
         setError(null);
         try {
             const response = await fetchTasks(page);
+            console.log("Tasks response:", response.data); // Debug
             setTasks(response.data.results);
             setNextPage(response.data.next ? page + 1 : null);
             setPrevPage(response.data.previous ? page - 1 : null);
@@ -119,7 +125,6 @@ const ToDoList = () => {
             {error && <p className="error-message">{error}</p>}
             {notification && <div className="notification">{notification}</div>}
 
-            {/* Task Form (Above the List) */}
             <div className="task-form">
                 <h3>{editingTask ? "Edit Task" : "Add Task"}</h3>
                 <input
@@ -155,7 +160,6 @@ const ToDoList = () => {
                 </button>
             </div>
 
-            {/* Task List (Below the Form) */}
             {loading ? (
                 <p>Loading tasks...</p>
             ) : (
