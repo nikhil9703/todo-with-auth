@@ -1,4 +1,3 @@
-// src/components/ToDoList.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchTasks, createTask, updateTask, deleteTask } from "../api";
@@ -20,7 +19,7 @@ const ToDoList = () => {
     useEffect(() => {
         const token = localStorage.getItem("access");
         if (!token) {
-            navigate("/login"); // Redirect if no token
+            navigate("/login"); 
             return;
         }
         loadTasks();
@@ -33,7 +32,7 @@ const ToDoList = () => {
 
     const handleUnauthorized = () => {
         localStorage.removeItem("access");
-        navigate("/login"); // Navigation handled here
+        navigate("/login"); 
     };
 
     const loadTasks = async (page = 1) => {
@@ -41,7 +40,6 @@ const ToDoList = () => {
         setError(null);
         try {
             const response = await fetchTasks(page);
-            console.log("Tasks response:", response.data); // Debug
             setTasks(response.data.results);
             setNextPage(response.data.next ? page + 1 : null);
             setPrevPage(response.data.previous ? page - 1 : null);
