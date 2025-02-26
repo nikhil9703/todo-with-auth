@@ -19,7 +19,7 @@ from .models import Task
 from .serializer import TaskSerializer
 from rest_framework.pagination import PageNumberPagination
 
-# Define TaskPagination class
+
 class TaskPagination(PageNumberPagination):
     page_size = 5
     page_size_query_param = 'page_size'
@@ -116,7 +116,6 @@ def reset_password(request, uidb64, token):
 @permission_classes([IsAuthenticated])
 def task_list_create(request):
     if request.method == "GET":
-        # Filter tasks by the authenticated user
         tasks = Task.objects.filter(user=request.user).order_by('id')
         paginator = TaskPagination()
         paginated_tasks = paginator.paginate_queryset(tasks, request)
@@ -126,7 +125,6 @@ def task_list_create(request):
     elif request.method == "POST":
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
-            # Associate the task with the authenticated user
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -135,7 +133,6 @@ def task_list_create(request):
 @permission_classes([IsAuthenticated])
 def task_detail(request, pk):
     try:
-        # Filter tasks by the authenticated user
         task = Task.objects.get(pk=pk, user=request.user)
     except Task.DoesNotExist:
         return Response({"error": "Task not found or not yours"}, status=status.HTTP_404_NOT_FOUND)
