@@ -12,15 +12,13 @@ const Login = () => {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        console.log(formData);
+
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await login(formData);
-
-            console.log("Login Response:", response.data);
             const newaccess = response.data.access;
             const username = formData.username;
 

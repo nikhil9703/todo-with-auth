@@ -21,7 +21,9 @@ export const requestPasswordReset = async (email) => {
 };
 
 export const resetPassword = async (uid, token, password) => {
-    return axios.post(`${API_BASE_URL}/password-reset-confirm/${uid}/${token}/`, { password },{ headers: { "Content-Type": "application/json" } });
+    return axios.post(`${API_BASE_URL}/password-reset-confirm/${uid}/${token}/`, { password }, {
+        headers: { "Content-Type": "application/json" }
+    });
 };
 
 const getAuthHeaders = () => {
@@ -29,18 +31,17 @@ const getAuthHeaders = () => {
     return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-export const fetchTasks = async () => {
+export const fetchTasks = async (page = 1) => {
     const token = localStorage.getItem("token"); 
     if (!token) {
         throw new Error("No authentication token found. Please log in.");
     }
-
-    return axios.get(`${API_BASE_URL}/tasks/`, {
+    return axios.get(`${API_BASE_URL}/tasks/?page=${page}`, {
         headers: {
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
         },
     });
-}
+};
 
 export const createTask = async (task) => {
     return axios.post(`${API_BASE_URL}/tasks/`, task, {
@@ -48,23 +49,18 @@ export const createTask = async (task) => {
     });
 };
 
-// export const updateTask = async (id, task) => {
-//     return axios.put(`${API_BASE_URL}/tasks/${id}/`, task, {
-//         headers: getAuthHeaders(),
-//     });
-// };
-
-export const deleteTask = async (id) => {
-    return axios.delete(`${API_BASE_URL}/tasks/${id}/`, {
-        headers: getAuthHeaders(),
-    });
-};
 export const updateTask = async (id, task) => {
     console.log("Updating task data:", task); 
     return axios.put(`${API_BASE_URL}/tasks/${id}/`, task, {
         headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",  
+            "Content-Type": "application/json",
         },
+    });
+};
+
+export const deleteTask = async (id) => {
+    return axios.delete(`${API_BASE_URL}/tasks/${id}/`, {
+        headers: getAuthHeaders(),
     });
 };

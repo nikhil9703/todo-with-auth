@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Add this import
 import { fetchTasks, createTask, updateTask, deleteTask } from "../api";
 import './ToDoList.css';
-
 
 const ToDoList = () => {
     const [tasks, setTasks] = useState([]);
@@ -9,20 +9,37 @@ const ToDoList = () => {
     const [error, setError] = useState(null);
     const [newTask, setNewTask] = useState({ title: "", description: "", status: "Pending" });
     const [editingTask, setEditingTask] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [nextPage, setNextPage] = useState(null);
+    const [prevPage, setPrevPage] = useState(null);
+
+    const navigate = useNavigate(); // Add this for unauthorized handling
 
     useEffect(() => {
         loadTasks();
     }, []);
 
-    const loadTasks = async () => {
+    const handleUnauthorized = () => {
+        localStorage.removeItem('token'); // Adjust 'token' to match your key
+        navigate('/login');
+    };
+
+    const loadTasks = async (page = 1) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetchTasks();
-            setTasks(response.data);
+            const response = await fetchTasks(page);
+            setTasks(response.data.results);
+            setNextPage(response.data.next ? page + 1 : null);
+            setPrevPage(response.data.previous ? page - 1 : null);
+            setCurrentPage(page);
         } catch (error) {
             console.error("Error fetching tasks:", error);
-            setError("Failed to load tasks.");
+            if (error.response && error.response.status === 401) {
+                handleUnauthorized();
+            } else {
+                setError("Failed to load tasks.");
+            }
         }
         setLoading(false);
     };
@@ -35,9 +52,12 @@ const ToDoList = () => {
         try {
             await createTask(newTask);
             setNewTask({ title: "", description: "", status: "Pending" });
-            loadTasks();
+            loadTasks(currentPage); // Reload current page
         } catch (error) {
             console.error("Error creating task:", error);
+            if (error.response && error.response.status === 401) {
+                handleUnauthorized();
+            }
         }
     };
 
@@ -49,9 +69,12 @@ const ToDoList = () => {
         try {
             await updateTask(editingTask.id, editingTask);
             setEditingTask(null);
-            loadTasks();
+            loadTasks(currentPage); // Reload current page
         } catch (error) {
             console.error("Error updating task:", error);
+            if (error.response && error.response.status === 401) {
+                handleUnauthorized();
+            }
         }
     };
 
@@ -59,19 +82,31 @@ const ToDoList = () => {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
         try {
             await deleteTask(id);
-            loadTasks();
+            loadTasks(currentPage); // Reload current page
         } catch (error) {
             console.error("Error deleting task:", error);
+            if (error.response && error.response.status === 401) {
+                handleUnauthorized();
+            }
+        }
+    };
+
+    const goToNextPage = () => {
+        if (nextPage) {
+            loadTasks(nextPage);
+        }
+    };
+
+    const goToPrevPage = () => {
+        if (prevPage) {
+            loadTasks(prevPage);
         }
     };
 
     return (
         <div className="todo-container">
             <h2>To-Do List</h2>
-
             {error && <p className="error-message">{error}</p>}
-
-            {/* Task Table */}
             {loading ? (
                 <p>Loading tasks...</p>
             ) : (
@@ -105,8 +140,11 @@ const ToDoList = () => {
                     </tbody>
                 </table>
             )}
-
-            {/* Add / Edit Task */}
+            <div className="pagination-controls">
+                <button onClick={goToPrevPage} disabled={!prevPage}>Previous</button>
+                <span>Page {currentPage}</span>
+                <button onClick={goToNextPage} disabled={!nextPage}>Next</button>
+            </div>
             <div className="task-form">
                 <h3>{editingTask ? "Edit Task" : "Add Task"}</h3>
                 <input 
@@ -127,7 +165,6 @@ const ToDoList = () => {
                         editingTask ? setEditingTask({ ...editingTask, description: value }) : setNewTask({ ...newTask, description: value });
                     }} 
                 />
-                
                 <select 
                     value={editingTask ? editingTask.status : newTask.status} 
                     onChange={(e) => {
