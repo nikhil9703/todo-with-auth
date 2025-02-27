@@ -1,4 +1,4 @@
-// src/components/ToDoList.js
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchTasks, createTask, updateTask, deleteTask } from "../api";
@@ -13,27 +13,22 @@ const ToDoList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [nextPage, setNextPage] = useState(null);
     const [prevPage, setPrevPage] = useState(null);
-    const [notification, setNotification] = useState(null);
+    const [notification, setNotification] = useState({ message: null, type: null }); 
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("access");
-        if (!token) {
-            navigate("/login"); // Redirect if no token
-            return;
-        }
         loadTasks();
-    }, [navigate]);
+    }, []);
 
-    const showNotification = (message) => {
-        setNotification(message);
-        setTimeout(() => setNotification(null), 5000);
+    const showNotification = (message, type = "success") => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification({ message: null, type: null }), 5000);
     };
 
     const handleUnauthorized = () => {
         localStorage.removeItem("access");
-        navigate("/login"); // Navigation handled here
+        navigate("/login");
     };
 
     const loadTasks = async (page = 1) => {
@@ -41,7 +36,7 @@ const ToDoList = () => {
         setError(null);
         try {
             const response = await fetchTasks(page);
-            console.log("Tasks response:", response.data); // Debug
+            console.log("Tasks response:", response.data);
             setTasks(response.data.results);
             setNextPage(response.data.next ? page + 1 : null);
             setPrevPage(response.data.previous ? page - 1 : null);
@@ -59,36 +54,40 @@ const ToDoList = () => {
 
     const handleCreateTask = async () => {
         if (!newTask.title || !newTask.description) {
-            alert("Title and Description are required!");
+            showNotification("Title and Description are required!", "error");
             return;
         }
         try {
             await createTask(newTask);
             setNewTask({ title: "", description: "", status: "Pending" });
-            showNotification("Task added successfully!");
+            showNotification("Task added successfully!", "success");
             loadTasks(currentPage);
         } catch (error) {
             console.error("Error creating task:", error);
             if (error.response && error.response.status === 401) {
                 handleUnauthorized();
+            } else {
+                showNotification("Failed to add task.", "error");
             }
         }
     };
 
     const handleUpdateTask = async () => {
         if (!editingTask.title || !editingTask.description) {
-            alert("Title and Description are required!");
+            showNotification("Title and Description are required!", "error");
             return;
         }
         try {
             await updateTask(editingTask.id, editingTask);
             setEditingTask(null);
-            showNotification("Task updated successfully!");
+            showNotification("Task updated successfully!", "success");
             loadTasks(currentPage);
         } catch (error) {
             console.error("Error updating task:", error);
             if (error.response && error.response.status === 401) {
                 handleUnauthorized();
+            } else {
+                showNotification("Failed to update task.", "error");
             }
         }
     };
@@ -97,12 +96,14 @@ const ToDoList = () => {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
         try {
             await deleteTask(id);
-            showNotification("Task deleted successfully!");
+            showNotification("Task deleted successfully!", "success");
             loadTasks(currentPage);
         } catch (error) {
             console.error("Error deleting task:", error);
             if (error.response && error.response.status === 401) {
                 handleUnauthorized();
+            } else {
+                showNotification("Failed to delete task.", "error");
             }
         }
     };
@@ -123,7 +124,11 @@ const ToDoList = () => {
         <div className="todo-container">
             <h2>To-Do List</h2>
             {error && <p className="error-message">{error}</p>}
-            {notification && <div className="notification">{notification}</div>}
+            {notification.message && (
+                <div className={`notification ${notification.type === "error" ? "notification-error" : "notification-success"}`}>
+                    {notification.message}
+                </div>
+            )}
 
             <div className="task-form">
                 <h3>{editingTask ? "Edit Task" : "Add Task"}</h3>

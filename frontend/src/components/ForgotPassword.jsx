@@ -1,8 +1,7 @@
-// src/components/ForgotPassword.jsx
 import React, { useState } from "react";
 import { requestPasswordReset } from "../api";
 import { useNavigate } from "react-router-dom";
-
+import "./ForgotPassword.css"
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -14,8 +13,8 @@ const ForgotPassword = () => {
         e.preventDefault();
         try {
             const response = await requestPasswordReset(email);
-            setMessage(response.data.message); // "Mail sent"
-            setTimeout(() => navigate("/login"), 2000); // Redirect after 2s
+            setMessage(response.data.message); 
+            setTimeout(() => navigate("/login"), 2000); 
         } catch (err) {
             setError(err.response?.data?.error || "Failed to send reset email");
         }

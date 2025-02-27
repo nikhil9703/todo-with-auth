@@ -134,11 +134,25 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgb(40, 167, 69);
-    color: white;
     padding: 10px 20px;
     border-radius: 4px;
     z-index: 1001;
-    cursor: context-menu;
-    animation: fadeInOut 10s ease-in-out;
+    animation: fadeInOut 5s ease-in-out;
+}
+
+.notification-success {
+    background: rgb(40, 167, 69); /* Green for success */
+    color: white;
+}
+
+.notification-error {
+    background: rgb(220, 53, 69); /* Red for error */
+    color: white;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
 }

@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState, useContext } from "react";
 import { login } from "../api";
 import { useNavigate } from "react-router-dom";
@@ -9,27 +8,29 @@ const Login = () => {
     const [formData, setFormData] = useState({ username: "", password: "" });
     const { loginUser } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [notification, setNotification] = useState(null); 
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const showNotification = (message, type = "error") => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification(null), 5000); 
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await login(formData);
-            console.log("Login response:", response.data); // Debug
+            console.log("Login response:", response.data);
             const accessToken = response.data.access;
             const username = formData.username;
-
-            // Store in localStorage for api.js to use
-            localStorage.setItem("access", accessToken);
-            // Update AuthContext
             loginUser(accessToken, username);
-            navigate("/todo"); // Should move to ToDoList
+            navigate("/todo");
         } catch (error) {
             console.error("Login Error:", error.response ? error.response.data : error);
-            alert("Invalid credentials");
+            showNotification("Invalid credentials", "error"); 
         }
     };
 
@@ -52,6 +53,11 @@ const Login = () => {
             />
             <button type="submit">Login</button>
             <p><a href="/forgot-password">Forgot Password?</a></p>
+            {notification && (
+                <div className={`notification ${notification.type === "error" ? "notification-error" : "notification-success"}`}>
+                    {notification.message}
+                </div>
+            )}
         </form>
     );
 };

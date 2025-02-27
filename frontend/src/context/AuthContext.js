@@ -1,4 +1,3 @@
-// src/context/AuthContext.js
 import { createContext, useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 
@@ -16,7 +15,6 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         setUser(null);
         setUsername("Guest");
-        // Navigation removed from here; handled by consuming components
     }, []);
 
     useEffect(() => {
@@ -27,10 +25,9 @@ export const AuthProvider = ({ children }) => {
                 setUsername(decodedUser.username || "Guest");
                 localStorage.setItem("username", decodedUser.username || "Guest");
 
-                const expireTime = decodedUser.exp * 1000; // Token expiration in milliseconds
+                const expireTime = decodedUser.exp * 1000;
                 const currentTime = Date.now();
                 if (expireTime < currentTime) {
-                    // Token expired
                     logoutUser();
                 }
             } catch (error) {

@@ -11,8 +11,8 @@
 
 
 .form-title {
-    font-size: 2em;
-    color: rgb(76, 175, 80);
+    font-size: 2em; /* 32px based on typical defaults */
+    color: rgb(76, 175, 80); /* Green color */
     margin-bottom: 20px;
 }
 
@@ -28,16 +28,15 @@
     transition: border-color 0.3s;
 }
 
-
 .formcont input[type="text"]:focus,
 .formcont input[type="password"]:focus {
-    border-color: rgb(76, 175, 80);
+    border-color: rgb(76, 175, 80); /* Green focus border */
     outline: none;
 }
 
 
 .formcont button[type="submit"] {
-    background-color: rgb(76, 175, 80);
+    background-color: rgb(76, 175, 80); /* Green button */
     color: white;
     padding: 10px 20px;
     border: none;
@@ -48,19 +47,44 @@
     transition: background-color 0.3s;
 }
 
-
 .formcont button[type="submit"]:hover {
-    background-color: rgb(69, 160, 73);
+    background-color: rgb(69, 160, 73); /* Darker green on hover */
 }
 
 
 .formcont p a {
-    color: rgb(76, 175, 80);
+    color: rgb(76, 175, 80); /* Green link */
     text-decoration: none;
     transition: color 0.3s;
 }
 
-/* Link Hover Effect */
 .formcont p a:hover {
-    color: #45a049;
+    color: #45a049; 
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    z-index: 1001;
+    animation: fadeInOut 5s ease-in-out;
+}
+
+.notification-success {
+    background: rgb(40, 167, 69); 
+    color: white;
+}
+
+.notification-error {
+    background: rgb(220, 53, 69); 
+    color: white;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
 }

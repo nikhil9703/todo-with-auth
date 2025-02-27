@@ -1,22 +1,21 @@
-// src/components/ResetPassword.jsx
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../api";
-import "./ResetPassword.css"; // Assuming you have this
+import "./ResetPassword.css"
 
 const ResetPassword = () => {
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState(null);
     const [error, setError] = useState(null);
-    const { uid, token } = useParams(); // Get uid and token from URL
+    const { uid, token } = useParams();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await resetPassword(uid, token, password);
-            setMessage(response.data.message); // "Password reset success!"
-            setTimeout(() => navigate("/login"), 2000); // Redirect after 2s
+            setMessage(response.data.message);
+            setTimeout(() => navigate("/login"), 2000);
         } catch (err) {
             setError(err.response?.data?.error || "Failed to reset password");
         }
