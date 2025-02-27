@@ -6,15 +6,12 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem("access") || null);
-    const [username, setUsername] = useState(localStorage.getItem("username") || "Guest");
 
     const logoutUser = useCallback(() => {
         console.log("Logging out...");
         localStorage.removeItem("access");
-        localStorage.removeItem("username");
         setToken(null);
         setUser(null);
-        setUsername("Guest");
     }, []);
 
     useEffect(() => {
@@ -22,10 +19,8 @@ export const AuthProvider = ({ children }) => {
             try {
                 const decodedUser = jwtDecode(token);
                 setUser(decodedUser);
-                setUsername(decodedUser.username || "Guest");
-                localStorage.setItem("username", decodedUser.username || "Guest");
 
-                const expireTime = decodedUser.exp * 1000;
+                const expireTime = decodedUser.exp * 1000; // Token expiration in milliseconds
                 const currentTime = Date.now();
                 if (expireTime < currentTime) {
                     logoutUser();
@@ -36,19 +31,14 @@ export const AuthProvider = ({ children }) => {
             }
         } else {
             setUser(null);
-            setUsername("Guest");
         }
     }, [token, logoutUser]);
 
-    const loginUser = (newAccess, userName) => {
+    const loginUser = (newAccess) => {
         try {
             const decodedUser = jwtDecode(newAccess);
-            const username = userName || decodedUser.username || "Guest";
-
             localStorage.setItem("access", newAccess);
-            localStorage.setItem("username", username);
             setToken(newAccess);
-            setUsername(username);
             setUser(decodedUser);
         } catch (error) {
             console.error("Error decoding token during login:", error);
@@ -57,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, username, loginUser, logoutUser, token }}>
+        <AuthContext.Provider value={{ user, loginUser, logoutUser, token }}>
             {children}
         </AuthContext.Provider>
     );

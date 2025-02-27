@@ -6,10 +6,12 @@ import "./Navbar.css";
 const Navbar = () => {
     const { token, logoutUser } = useContext(AuthContext);
     const navigate = useNavigate();
+
     const handleLogout = () => {
         logoutUser();
         navigate("/login");
     };
+
     return (
         <nav className="navbar">
             <h2 className="navname">To Do List</h2>
@@ -27,4 +29,5 @@ const Navbar = () => {
         </nav>
     );
 };
+
 export default Navbar;

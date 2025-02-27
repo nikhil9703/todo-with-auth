@@ -1,13 +1,14 @@
-
 import React, { useState, useContext } from "react";
 import { signup } from "../api";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import "./Signup.css";
+
 const Signup = () => {
     const [formData, setFormData] = useState({ username: "", email: "", password: "", confirmpassword: "" });
     const { loginUser } = useContext(AuthContext);
     const navigate = useNavigate();
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -16,9 +17,8 @@ const Signup = () => {
         e.preventDefault();
         try {
             const response = await signup(formData);
-            const accessToken = response.data.tokens.access; 
-            const username = formData.username;
-            loginUser(accessToken, username);
+            const accessToken = response.data.tokens.access;
+            loginUser(accessToken);
             navigate("/todo");
         } catch (error) {
             alert(error.response?.data?.error || "Signup failed");
@@ -59,4 +59,5 @@ const Signup = () => {
         </form>
     );
 };
+
 export default Signup;

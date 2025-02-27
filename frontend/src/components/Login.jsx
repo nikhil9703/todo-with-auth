@@ -8,7 +8,7 @@ const Login = () => {
     const [formData, setFormData] = useState({ username: "", password: "" });
     const { loginUser } = useContext(AuthContext);
     const navigate = useNavigate();
-    const [notification, setNotification] = useState(null); 
+    const [notification, setNotification] = useState(null);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,7 +16,7 @@ const Login = () => {
 
     const showNotification = (message, type = "error") => {
         setNotification({ message, type });
-        setTimeout(() => setNotification(null), 5000); 
+        setTimeout(() => setNotification(null), 5000);
     };
 
     const handleSubmit = async (e) => {
@@ -25,12 +25,12 @@ const Login = () => {
             const response = await login(formData);
             console.log("Login response:", response.data);
             const accessToken = response.data.access;
-            const username = formData.username;
-            loginUser(accessToken, username);
+
+            loginUser(accessToken);
             navigate("/todo");
         } catch (error) {
             console.error("Login Error:", error.response ? error.response.data : error);
-            showNotification("Invalid credentials", "error"); 
+            showNotification("Invalid credentials", "error");
         }
     };
 

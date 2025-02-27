@@ -20,23 +20,19 @@ const ToDoList = () => {
     useEffect(() => {
         loadTasks();
     }, []);
-
     const showNotification = (message, type = "success") => {
         setNotification({ message, type });
         setTimeout(() => setNotification({ message: null, type: null }), 5000);
     };
-
     const handleUnauthorized = () => {
         localStorage.removeItem("access");
         navigate("/login");
     };
-
     const loadTasks = async (page = 1) => {
         setLoading(true);
         setError(null);
         try {
             const response = await fetchTasks(page);
-            console.log("Tasks response:", response.data);
             setTasks(response.data.results);
             setNextPage(response.data.next ? page + 1 : null);
             setPrevPage(response.data.previous ? page - 1 : null);
@@ -93,7 +89,7 @@ const ToDoList = () => {
     };
 
     const handleDeleteTask = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this task?")) return;
+        // if (!window.confirm("Are you sure you want to delete this task?")) return;s
         try {
             await deleteTask(id);
             showNotification("Task deleted successfully!", "success");
