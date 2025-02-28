@@ -3,7 +3,6 @@ import { login } from "../api";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import "./Login.css";
-
 const Login = () => {
     const [formData, setFormData] = useState({ username: "", password: "" });
     const { loginUser } = useContext(AuthContext);
